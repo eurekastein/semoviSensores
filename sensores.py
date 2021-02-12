@@ -12,10 +12,11 @@ from timeit import default_timer as timer
 from datetime import timedelta
 #from psycopg2 import ProgrammingError, errorcodes, errors
 import geopandas as gpd
-
+## Mapbox Token
 access_token = 'pk.eyJ1Ijoic2NpZW50aWZpY2RldGVjdGl2ZXNhZ2VuY3kiLCJhIjoiY2p6aHFmaHlpMHlmOTNucWtrd2FyMzlndCJ9.bBgagYmGca64Y5VZYe9UNA'
 px.set_mapbox_access_token(access_token)
 
+## Conexión con la base de datos 
 def make_conn ():
     connection = psycopg2.connect(user="postgres",
                         password="G301nt43",
@@ -25,6 +26,7 @@ def make_conn ():
                         )
     return connection
 
+## Itera sobre un query lo manda a gdf y hace un append generando una sola tabla filtrada para la lista de sensores 
 def sensor_table(sensor_list): 
     ##Hace un append por cada tabla de sensor con sus valores## 
     connection = make_conn()
@@ -44,6 +46,8 @@ def sensor_table(sensor_list):
 
 sensors = sensor_table(sensor_list)    
 sensors = df.filter(["id","ts", "ubicacion", "latitude", "longitude", "valores"]) 
+
+## Cambia el formato de decha 
 sensors['date'] = sensors['ts'].dt.strftime('%Y-%m-%d')
 date_mask = sensors['date'] == sensors['date'].max()
 
